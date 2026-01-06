@@ -81,6 +81,131 @@
     width: 80%;
   }
 
+  .cart-icon {
+    color: #cbd5e1;
+    padding: 18px 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    border-left: 2px solid #334155;
+  }
+
+  .cart-icon:hover {
+    color: #60a5fa;
+    background: #334155;
+  }
+
+  .cart-count {
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    margin-left: 8px;
+  }
+
+  .cart-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+  }
+
+  .cart-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cart-content {
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 2px solid #334155;
+  }
+
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: white;
+  }
+
+  .cart-close {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .cart-item {
+    background: #0f172a;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+  }
+
+  .cart-item-info h4 {
+    margin-bottom: 5px;
+  }
+
+  .cart-item-price {
+    color: #60a5fa;
+    font-weight: 700;
+  }
+
+  .cart-item-remove {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .cart-total {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 20px 0;
+    text-align: right;
+  }
+
+  .cart-checkout {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .cart-empty {
+    color: #94a3b8;
+    text-align: center;
+    padding: 40px;
+  }
+
   .container {
     max-width: 1400px;
     margin: 40px auto;
@@ -152,29 +277,38 @@
     color: #60a5fa;
   }
 
-  .buy-btn {
-    background: #3b82f6;
+  .product-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .buy-btn, .cart-btn {
     color: white;
     border: none;
-    padding: 14px 32px;
-    border-radius: 50px;
+    padding: 12px 24px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-    width: 100%;
-    max-width: 200px;
+  }
+
+  .buy-btn {
+    background: #3b82f6;
+    flex: 1;
   }
 
   .buy-btn:hover {
     background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
   }
 
-  .buy-btn:active {
-    transform: translateY(0);
+  .cart-btn {
+    background: #64748b;
+    flex: 1;
+  }
+
+  .cart-btn:hover {
+    background: #475569;
   }
 
   footer {
@@ -194,14 +328,17 @@
   @media (max-width: 768px) {
     header h1 { font-size: 2rem; }
     header p { font-size: 1rem; }
-    nav { flex-wrap: wrap; }
+    nav { flex-direction: column; }
+    .nav-links { flex-direction: column; width: 100%; }
     nav a { padding: 14px 18px; font-size: 0.9rem; }
+    .cart-icon { margin: 0; padding: 14px; border-top: 1px solid #334155; width: 100%; text-align: center; }
     .container { padding: 0 15px; margin: 20px auto; }
     .section-title { font-size: 1.6rem; margin-bottom: 30px; }
     .products { grid-template-columns: 1fr; gap: 20px; }
     .product-image-wrapper { height: 240px; }
     .product h3 { font-size: 1.2rem; }
     .price { font-size: 1.5rem; }
+    .product-buttons { flex-direction: column; }
   }
 
   @media (max-width: 480px) {
@@ -223,7 +360,22 @@
   <a href="#shop">shop</a>
   <a href="#about">about</a>
   <a href="#contact">contact</a>
+  <div class="cart-icon" onclick="toggleCart()">
+    cart <span class="cart-count" id="cartCount">0</span>
+  </div>
 </nav>
+
+<div class="cart-modal" id="cartModal">
+  <div class="cart-content">
+    <div class="cart-header">
+      <h2>your cart</h2>
+      <button class="cart-close" onclick="toggleCart()">close</button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="cart-total" id="cartTotal"></div>
+    <button class="cart-checkout" onclick="checkout()">checkout</button>
+  </div>
+</div>
 
 <div class="container">
   <h2 class="section-title">featured products</h2>
@@ -249,12 +401,20 @@
         <div class="price">$19.99</div>
         
         <!-- step 5: update data-price (in cents: $19.99 = 1999) and data-product-name -->
-        <button class="buy-btn" 
-                data-price="1999" 
-                data-product-name="Product Name 1"
-                onclick="handlePurchase(this)">
-          Buy Now
-        </button>
+        <div class="product-buttons">
+          <button class="buy-btn" 
+                  data-price="1999" 
+                  data-product-name="Product Name 1"
+                  onclick="buyNow(this)">
+            Buy Now
+          </button>
+          <button class="cart-btn"
+                  data-price="1999"
+                  data-product-name="Product Name 1"
+                  onclick="addToCart(this)">
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
     
@@ -267,12 +427,20 @@
         <h3>product Name 2</h3>
         <p>short descriptigbhfgtbnhbgtrtfgbhnhbgtbhnhgtbhon of the product goes here.</p>
         <div class="price">$29.99</div>
-        <button class="buy-btn" 
-                data-price="2999" 
-                data-product-name="product Name 2"
-                onclick="handlePurchase(this)">
-          Buy Now
-        </button>
+        <div class="product-buttons">
+          <button class="buy-btn" 
+                  data-price="2999" 
+                  data-product-name="product Name 2"
+                  onclick="buyNow(this)">
+            Buy Now
+          </button>
+          <button class="cart-btn"
+                  data-price="2999"
+                  data-product-name="product Name 2"
+                  onclick="addToCart(this)">
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
     
@@ -285,12 +453,20 @@
         <h3>product name 3</h3>
         <p>short description of the product goes herebffvvgfgtffrrffrfvg....................</p>
         <div class="price">$39.99</div>
-        <button class="buy-btn" 
-                data-price="3999" 
-                data-product-name="product name 3"
-                onclick="handlePurchase(this)">
-          Buy Now
-        </button>
+        <div class="product-buttons">
+          <button class="buy-btn" 
+                  data-price="3999" 
+                  data-product-name="product name 3"
+                  onclick="buyNow(this)">
+            Buy Now
+          </button>
+          <button class="cart-btn"
+                  data-price="3999"
+                  data-product-name="product name 3"
+                  onclick="addToCart(this)">
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
 
@@ -304,22 +480,88 @@
 </footer>
 
 <script>
-  function handlePurchase(button) {
-    const productName = button.getAttribute('data-product-name');
-    const price = button.getAttribute('data-price');
-    const priceDisplay = (price / 100).toFixed(2);
+  let cart = [];
+
+  function updateCartCount() {
+    document.getElementById('cartCount').textContent = cart.length;
+  }
+
+  function updateCartDisplay() {
+    const cartItems = document.getElementById('cartItems');
+    const cartTotal = document.getElementById('cartTotal');
     
-    button.disabled = true;
-    button.textContent = 'Added!';
+    if (cart.length === 0) {
+      cartItems.innerHTML = '<div class="cart-empty">your cart is empty</div>';
+      cartTotal.innerHTML = '';
+      return;
+    }
+    
+    let total = 0;
+    cartItems.innerHTML = cart.map((item, index) => {
+      total += item.price;
+      return `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+            <div class="cart-item-price">$${(item.price / 100).toFixed(2)}</div>
+          </div>
+          <button class="cart-item-remove" onclick="removeFromCart(${index})">remove</button>
+        </div>
+      `;
+    }).join('');
+    
+    cartTotal.innerHTML = `total: $${(total / 100).toFixed(2)}`;
+  }
+
+  function addToCart(button) {
+    const name = button.getAttribute('data-product-name');
+    const price = parseInt(button.getAttribute('data-price'));
+    
+    cart.push({ name, price });
+    updateCartCount();
+    
+    button.textContent = 'added!';
     button.style.background = '#10b981';
     
-    alert(`${productName} - $${priceDisplay}\n\nthis is a demo. Payment processing will be added later. BAHAHHAHAHAHA`);
-    
     setTimeout(() => {
-      button.disabled = false;
-      button.textContent = 'Buy Now';
-      button.style.background = '#3b82f6';
-    }, 2000);
+      button.textContent = 'Add to Cart';
+      button.style.background = '#64748b';
+    }, 1000);
+  }
+
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartCount();
+    updateCartDisplay();
+  }
+
+  function toggleCart() {
+    const modal = document.getElementById('cartModal');
+    modal.classList.toggle('active');
+    if (modal.classList.contains('active')) {
+      updateCartDisplay();
+    }
+  }
+
+  function buyNow(button) {
+    const name = button.getAttribute('data-product-name');
+    const price = parseInt(button.getAttribute('data-price'));
+    
+    alert(`${name} - $${(price / 100).toFixed(2)}\n\nthis is a demo. Payment processing will be added later. BAHAHHAHAHAHA`);
+  }
+
+  function checkout() {
+    if (cart.length === 0) {
+      alert('your cart is empty!');
+      return;
+    }
+    
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    alert(`checkout total: $${(total / 100).toFixed(2)}\n\nthis is a demo. Payment processing will be added later. BAHAHHAHAHAHA`);
+    
+    cart = [];
+    updateCartCount();
+    updateCartDisplay();
   }
 </script>
 
